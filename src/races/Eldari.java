@@ -16,4 +16,19 @@ public class Eldari extends Race {
                 new SpecialAbility(CharacterStat.PERCEPTION, "Krutvapen"),
         };
     }
+
+    @Override
+    public SpecialAbility[] getForcedSpecialAbilities() {
+        return new SpecialAbility[] {
+                new SpecialAbility(CharacterStat.LIST, "Läsa/Skriva")
+        };
+    }
+
+    @Override
+    public CharacterStat[] getRaceBonuses() {
+        return new CharacterStat[] {
+                CharacterStat.PERCEPTION,
+                CharacterStat.LIST
+        };
+    }
 }
