@@ -6,7 +6,7 @@ public class Initiate {
     }
     private Initiate() {
         MainPage mainPage = new MainPage();
-       SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 JFrame jFrame = new JFrame("Andrari Character sheet creator");
@@ -15,7 +15,7 @@ public class Initiate {
                 jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 jFrame.pack();
                 jFrame.setVisible(true);
-                mainPage.giveValue();
+                //mainPage.giveValue();
 
             }
         });
