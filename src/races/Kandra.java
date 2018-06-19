@@ -15,4 +15,12 @@ public class Kandra extends Race {
                 new SpecialAbility(CharacterStat.LIST, "Örtkunskap")
         };
     }
+
+    @Override
+    public CharacterStat[] getRaceBonuses() {
+        return new CharacterStat[] {
+                CharacterStat.SMIDIGHET,
+                CharacterStat.STYRKA
+        };
+    }
 }
