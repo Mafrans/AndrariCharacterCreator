@@ -1,5 +1,7 @@
 import javax.swing.*;
-
+//TODO Custom Hidden options and rings, popout box for custom förmåga.
+//Todo Save / Load save as json file.
+//Todo create export to pdf creator.
 public class Initiate {
     public static void main(String[] args) {
         new Initiate();
