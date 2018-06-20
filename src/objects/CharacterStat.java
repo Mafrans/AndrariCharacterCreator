@@ -1,12 +1,26 @@
 package objects;
 
 public enum CharacterStat {
-    KOMMUNIKATION,
-    FYSIK,
-    LIST,
-    SMIDIGHET,
-    PERCEPTION,
-    STYRKA,
-    VILJESTYRKA,
+    KOMMUNIKATION("Kommunikation"),
+    FYSIK("Fysik"),
+    LIST("List"),
+    SMIDIGHET("Smidighet"),
+    PERCEPTION("Perception"),
+    STYRKA("Styrka"),
+    VILJESTYRKA("Viljestyrka"),
     ;
+
+    private String name;
+    CharacterStat(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

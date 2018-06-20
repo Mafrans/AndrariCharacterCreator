@@ -1,10 +1,11 @@
 package objects;
 
 public enum Occupation {
-    FÖRKÄMPE("Förkämpe", new String[] {"Stark Röst", "Knocka", "Utmana"}, new SpecialAbility[] {}),
+    FORHANDLARE("Förhandlare", new String[] {"Intimidera", "Inspirera", "Infiltration", "Hållhake"}, new SpecialAbility[] {}),
+    FORKAMPE("Förkämpe", new String[] {"Stark Röst", "Knocka", "Utmana"}, new SpecialAbility[] {}),
     KUNSKAPARE("Kunskapare", new String[] {"Innovatör", "Obskyr Kunskap", "Sjätte Sinne"}, new SpecialAbility[] {}),
     SPECIALIST("Specialist", new String[] {}, new SpecialAbility[] {}),
-    FÖRHANDLARE("Förhandlare", new String[] {"Intimidera", "Inspirera", "Infiltration", "Hållhake"}, new SpecialAbility[] {}),
+
     ;
 
     private String name;
@@ -17,12 +18,20 @@ public enum Occupation {
     }
 
     public SpecialAbility[] getSpecialAbilities() {
-        return (SpecialAbility[]) EUtil.combineArrays(specialAbilities, getDefaultAbilities());
+        return specialAbilities;
     }
 
     @Override
     public String toString() {
         return name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String[] getAbilities() {
+        return abilities;
     }
 
     public static SpecialAbility[] getDefaultAbilities() {
@@ -61,7 +70,7 @@ public enum Occupation {
                 new SpecialAbility(CharacterStat.SMIDIGHET,"Låsdyrkning"),
                 new SpecialAbility(CharacterStat.SMIDIGHET,"Fingerfärdighet"),
                 new SpecialAbility(CharacterStat.SMIDIGHET,"Bågar/Armborst"),
-                new SpecialAbility(CharacterStat.SMIDIGHET,"Kast"),
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Kasta"),
 
                 // Perception
                 new SpecialAbility(CharacterStat.PERCEPTION, "Kanoner"),
