@@ -1,19 +1,20 @@
-import objects.ComboBoxItem;
-import objects.Occupation;
+import objects.*;
 import races.*;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainPage {
 
 
     JPanel mainpanel;
-    private JComboBox RaceBox;
-    private JComboBox CultureBonusBox;
+    private JComboBox raceBox;
+    private JComboBox cultureBonusBox;
     private JTextField lengthTextArea;
     private JTextField weightTextArea;
     private JComboBox statBox0;
@@ -30,10 +31,10 @@ public class MainPage {
     private JLabel styrkaLabel;
     private JLabel kommunicationLabel;
     private JComboBox occupationBox;
-    private JComboBox comboBox1;
-    private JComboBox comboBox2;
-    private JComboBox comboBox3;
-    private JComboBox comboBox4;
+    private JComboBox abilityComboBox;
+    private JComboBox specialComboBox;
+    private JComboBox specialComboBox2;
+    private JComboBox specialComboBox3;
     private JLabel förmågaLabel;
     private JLabel specialFörmågorLabel;
     private JPanel StatsPanel;
@@ -45,16 +46,57 @@ public class MainPage {
     private JButton saveToFileButton;
     private JButton generateSheetButton;
     private JComboBox[] statBoxes = {statBox0, statBox1, statBox2, statBox3, statBox4, statBox5, statBox6};
+    private JComboBox[] specialAbilityBoxes = {specialComboBox,specialComboBox2,specialComboBox3};
     private Race[] races = {new Eldari(), new Kandra(), new Riddare(), new Uldinari()};
     private Occupation[] occupations = Occupation.values();
     public MainPage() {
-        final StatBoxHandler statBoxHandler = new StatBoxHandler();
+
+        raceBox.setModel(new DefaultComboBoxModel(races));
+        raceBox.addActionListener(e -> {
+            for(JComboBox box : specialAbilityBoxes) {
+                box.setSelectedIndex(0);
+            }
+            CharacterStat[] cultureBonuses = ((Race)raceBox.getSelectedItem()).getRaceBonuses();
+            cultureBonusBox.setModel(new DefaultComboBoxModel(cultureBonuses));
+
+        });
+        CharacterStat[] cultureBonuses = ((Race)raceBox.getSelectedItem()).getRaceBonuses();
+        cultureBonusBox.setModel(new DefaultComboBoxModel(cultureBonuses));
+
+
+
+        occupationBox.setModel(new DefaultComboBoxModel(occupations));
+        occupationBox.addActionListener(e -> {
+            /*
+            for(JComboBox box : specialAbilityBoxes) {
+                box.setSelectedIndex(0);
+            }
+            */
+            String[] abilities = ((Occupation)occupationBox.getSelectedItem()).getAbilities();
+            abilityComboBox.setModel(new DefaultComboBoxModel(abilities));
+        });
+
+        String[] abilities = ((Occupation)occupationBox.getSelectedItem()).getAbilities();
+        abilityComboBox.setModel(new DefaultComboBoxModel(abilities));
+
+        final StatBoxHandler statBoxHandler = new StatBoxHandler(new ComboBoxItem[] {
+                new ComboBoxItem("default", " "),
+                new ComboBoxItem("+2", "+2"),
+                new ComboBoxItem("+1 0", "+1"),
+                new ComboBoxItem("+1 1", "+1"),
+                new ComboBoxItem("first +0", "+0"),
+                new ComboBoxItem("second +0", "+0"),
+                new ComboBoxItem("-1", "-1"),
+                new ComboBoxItem("-2", "-2"),
+        });
+
         for (int i = 0;i < statBoxes.length;i++) {
             final int currentIndex = i;
             statBoxHandler.registerBox(statBoxes[i]);
 
-            DefaultComboBoxModel model = new DefaultComboBoxModel(new ComboBoxItem[] {new ComboBoxItem("beforeInitial", "   ")});
+            DefaultComboBoxModel model = new DefaultComboBoxModel(new ComboBoxItem[] {new ComboBoxItem("beforeInitial", " "), new ComboBoxItem("beforeInitial", " "), new ComboBoxItem("beforeInitial", statBoxHandler.getLongestAvailableItem(statBoxes[i]))});
             statBoxes[i].setModel(model);
+            statBoxes[i].setSelectedIndex(0);
 
             statBoxes[i].addPopupMenuListener(new PopupMenuListener() {
                 @Override
@@ -87,8 +129,60 @@ public class MainPage {
             });
         }
 
-        RaceBox.setModel(new DefaultComboBoxModel(races));
-        occupationBox.setModel(new DefaultComboBoxModel(occupations));
 
+        final StatBoxHandler specialAbilityBoxHandler = new StatBoxHandler(new ComboBoxItem[0]);
+        for (int i = 0; i < specialAbilityBoxes.length; i++) {
+            final int currentIndex = i;
+            final JComboBox currentBox = specialAbilityBoxes[i];
+            specialAbilityBoxHandler.registerBox(specialAbilityBoxes[i]);
+
+            Object[] specialAbilities = EUtil.combineArrays(Occupation.getDefaultAbilities(), ((Occupation)occupationBox.getSelectedItem()).getSpecialAbilities(), ((Race) raceBox.getSelectedItem()).getAvailableSpecialAbilities());
+            List<ComboBoxItem> specialAbilityItems = new ArrayList<>();
+            specialAbilityItems.add(new ComboBoxItem("default", "   "));
+            for(int n = 0; n < specialAbilities.length; n++) {
+                specialAbilityItems.add(new ComboBoxItem(String.valueOf(n),((SpecialAbility)specialAbilities[n]).getAbility()));
+            }
+            specialAbilityBoxHandler.setDefaults(specialAbilityItems.toArray(new ComboBoxItem[0]));
+
+            DefaultComboBoxModel model = new DefaultComboBoxModel(new ComboBoxItem[] {new ComboBoxItem("beforeInitial"," "), new ComboBoxItem("beforeInitial", specialAbilityBoxHandler.getLongestAvailableItem(specialAbilityBoxes[i]))});
+            specialAbilityBoxes[i].setModel(model);
+            specialAbilityBoxes[i].setSelectedIndex(0);
+
+            specialAbilityBoxes[i].addPopupMenuListener(new PopupMenuListener() {
+                @Override
+                public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                    //System.out.println("popup menu visible");
+                    Object[] specialAbilities = EUtil.combineArrays(Occupation.getDefaultAbilities(), ((Occupation)occupationBox.getSelectedItem()).getSpecialAbilities(), ((Race) raceBox.getSelectedItem()).getAvailableSpecialAbilities());
+                    List<ComboBoxItem> specialAbilityItems = new ArrayList<>();
+                    specialAbilityItems.add(new ComboBoxItem("default", "   "));
+                    for(int i = 0; i < specialAbilities.length; i++) {
+                        specialAbilityItems.add(new ComboBoxItem(String.valueOf(i),((SpecialAbility)specialAbilities[i]).getAbility()));
+                    }
+
+                    specialAbilityBoxHandler.setDefaults(specialAbilityItems.toArray(new ComboBoxItem[0]));
+
+                    currentBox.setSelectedIndex(0);
+                    ComboBoxItem[] boxValues = specialAbilityBoxHandler.getAvailableStats(currentBox);
+                    currentBox.setModel(new DefaultComboBoxModel(boxValues));
+
+                    //System.out.println(Arrays.toString(boxValues));
+                }
+
+                @Override
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                    //System.out.println("popup menu invisible");
+                }
+
+                @Override
+                public void popupMenuCanceled(PopupMenuEvent e) {
+                    // Do nothing
+                }
+            });
+
+            specialAbilityBoxes[currentIndex].addActionListener(e -> {
+                specialAbilityBoxHandler.setBoxId(currentBox, ((ComboBoxItem)currentBox.getSelectedItem()).getId());
+            });
+
+        }
     }
 }

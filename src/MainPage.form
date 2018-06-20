@@ -7,6 +7,7 @@
     </constraints>
     <properties>
       <foreground color="-4489117"/>
+      <preferredSize width="640" height="480"/>
     </properties>
     <border type="none"/>
     <children>
@@ -66,7 +67,7 @@
               <text value="Ras"/>
             </properties>
           </component>
-          <component id="603b1" class="javax.swing.JComboBox" binding="RaceBox">
+          <component id="603b1" class="javax.swing.JComboBox" binding="raceBox">
             <constraints>
               <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -74,7 +75,7 @@
               <model/>
             </properties>
           </component>
-          <component id="d98cf" class="javax.swing.JComboBox" binding="CultureBonusBox">
+          <component id="d98cf" class="javax.swing.JComboBox" binding="cultureBonusBox">
             <constraints>
               <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -98,7 +99,7 @@
           </component>
           <component id="63669" class="javax.swing.JComboBox" binding="occupationBox">
             <constraints>
-              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
@@ -384,7 +385,7 @@
                       <text value="Förmåga"/>
                     </properties>
                   </component>
-                  <component id="7f659" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+                  <component id="7f659" class="javax.swing.JComboBox" binding="abilityComboBox">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -408,19 +409,19 @@
                       <text value="Special Förmågor"/>
                     </properties>
                   </component>
-                  <component id="7d189" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+                  <component id="7d189" class="javax.swing.JComboBox" binding="specialComboBox">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties/>
                   </component>
-                  <component id="de6ae" class="javax.swing.JComboBox" binding="comboBox3" default-binding="true">
+                  <component id="de6ae" class="javax.swing.JComboBox" binding="specialComboBox2">
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties/>
                   </component>
-                  <component id="2f20c" class="javax.swing.JComboBox" binding="comboBox4" default-binding="true">
+                  <component id="2f20c" class="javax.swing.JComboBox" binding="specialComboBox3">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>

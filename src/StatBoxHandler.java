@@ -5,17 +5,10 @@ import java.awt.event.ItemEvent;
 import java.util.*;
 
 public class StatBoxHandler {
-    private ComboBoxItem[] stats = {
-            new ComboBoxItem("default", " "),
-            new ComboBoxItem("+2", "+2"),
-            new ComboBoxItem("+1 0", "+1"),
-            new ComboBoxItem("+1 1", "+1"),
-            new ComboBoxItem("first +0", "+0"),
-            new ComboBoxItem("second +0", "+0"),
-            new ComboBoxItem("-1", "-1"),
-            new ComboBoxItem("-2", "-2"),
-    };
-
+    private ComboBoxItem[] stats = null;
+    public StatBoxHandler(ComboBoxItem[] stats) {
+        this.stats = stats;
+    }
     private final Map<JComboBox, String> comboBoxMap = new HashMap<>();
 
     public void registerBox(JComboBox comboBox) {
@@ -28,7 +21,6 @@ public class StatBoxHandler {
 
     public ComboBoxItem[] getAvailableStats(JComboBox comboBox) {
         List<ComboBoxItem> statsToUse = new ArrayList<>();
-        comboBox.setSelectedIndex(0);
 
         for (int i = 0; i < stats.length; i++) {
             String statId = stats[i].getId();
@@ -59,5 +51,25 @@ public class StatBoxHandler {
 
     public void setDefaults(ComboBoxItem[] defaults) {
         stats = defaults;
+    }
+
+    public String getLongestItem() {
+        String longestItem = "";
+        for(ComboBoxItem item : stats) {
+            if(item.getValue().length() > longestItem.length()) {
+                longestItem = item.getValue();
+            }
+        }
+        return longestItem;
+    }
+
+    public String getLongestAvailableItem(JComboBox box) {
+        String longestItem = "";
+        for(ComboBoxItem item : getAvailableStats(box)) {
+            if(item.getValue().length() > longestItem.length()) {
+                longestItem = item.getValue();
+            }
+        }
+        return longestItem;
     }
 }
