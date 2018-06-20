@@ -1,5 +1,6 @@
 package races;
 
+import objects.CharacterStat;
 import objects.Occupation;
 import objects.SpecialAbility;
 
@@ -10,8 +11,8 @@ public abstract class Race {
 
     public Occupation[] getAvailableOccupations() {
         return new Occupation[] {
-                Occupation.FÖRHANDLARE,
-                Occupation.FÖRKÄMPE,
+                Occupation.FORHANDLARE,
+                Occupation.FORKAMPE,
                 Occupation.KUNSKAPARE,
                 Occupation.SPECIALIST,
         };
@@ -28,5 +29,8 @@ public abstract class Race {
     @Override
     public String toString() {
         return getName();
+    }
+    public CharacterStat[] getRaceBonuses() {
+        return new CharacterStat[0];
     }
 }

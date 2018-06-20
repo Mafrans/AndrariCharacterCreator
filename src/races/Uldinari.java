@@ -15,4 +15,12 @@ public class Uldinari extends Race {
                 new SpecialAbility(CharacterStat.SMIDIGHET, "Ormkropp")
         };
     }
+
+    @Override
+    public CharacterStat[] getRaceBonuses() {
+        return new CharacterStat[] {
+                CharacterStat.SMIDIGHET,
+                CharacterStat.VILJESTYRKA
+        };
+    }
 }
