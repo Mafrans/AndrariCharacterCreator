@@ -1,4 +1,5 @@
 import objects.*;
+import org.json.JSONObject;
 import races.*;
 
 import javax.swing.*;
@@ -6,7 +7,9 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainPage {
@@ -49,6 +52,17 @@ public class MainPage {
     private JComboBox[] specialAbilityBoxes = {specialComboBox,specialComboBox2,specialComboBox3};
     private Race[] races = {new Eldari(), new Kandra(), new Riddare(), new Uldinari()};
     private Occupation[] occupations = Occupation.values();
+    private final StatBoxHandler statBoxHandler = new StatBoxHandler(new ComboBoxItem[] {
+            new ComboBoxItem("default", " "),
+            new ComboBoxItem("+2", "+2"),
+            new ComboBoxItem("+1 0", "+1"),
+            new ComboBoxItem("+1 1", "+1"),
+            new ComboBoxItem("first +0", "+0"),
+            new ComboBoxItem("second +0", "+0"),
+            new ComboBoxItem("-1", "-1"),
+            new ComboBoxItem("-2", "-2"),
+    });
+    private final StatBoxHandler specialAbilityBoxHandler = new StatBoxHandler(new ComboBoxItem[0]);
     public MainPage() {
 
         raceBox.setModel(new DefaultComboBoxModel(races));
@@ -79,16 +93,7 @@ public class MainPage {
         String[] abilities = ((Occupation)occupationBox.getSelectedItem()).getAbilities();
         abilityComboBox.setModel(new DefaultComboBoxModel(abilities));
 
-        final StatBoxHandler statBoxHandler = new StatBoxHandler(new ComboBoxItem[] {
-                new ComboBoxItem("default", " "),
-                new ComboBoxItem("+2", "+2"),
-                new ComboBoxItem("+1 0", "+1"),
-                new ComboBoxItem("+1 1", "+1"),
-                new ComboBoxItem("first +0", "+0"),
-                new ComboBoxItem("second +0", "+0"),
-                new ComboBoxItem("-1", "-1"),
-                new ComboBoxItem("-2", "-2"),
-        });
+
 
         for (int i = 0;i < statBoxes.length;i++) {
             final int currentIndex = i;
@@ -130,7 +135,6 @@ public class MainPage {
         }
 
 
-        final StatBoxHandler specialAbilityBoxHandler = new StatBoxHandler(new ComboBoxItem[0]);
         for (int i = 0; i < specialAbilityBoxes.length; i++) {
             final int currentIndex = i;
             final JComboBox currentBox = specialAbilityBoxes[i];
@@ -184,5 +188,49 @@ public class MainPage {
             });
 
         }
+    }
+
+    public JSONObject generateSaveData() {
+        Map<CharacterStat, Integer> statMap = new HashMap<>();
+        for(int i = 0; i < statBoxes.length; i++) {
+            JComboBox statBox = statBoxes[i];
+            Map<JComboBox, String> comboBoxMap = statBoxHandler.getComboBoxMap();
+
+            CharacterStat characterStat = null;
+            switch (i) {
+                case 0: characterStat = CharacterStat.KOMMUNIKATION;
+                case 1: characterStat = CharacterStat.FYSIK;
+                case 2: characterStat = CharacterStat.LIST;
+                case 3: characterStat = CharacterStat.SMIDIGHET;
+                case 4: characterStat = CharacterStat.PERCEPTION;
+                case 5: characterStat = CharacterStat.STYRKA;
+                case 6: characterStat = CharacterStat.VILJESTYRKA;
+            }
+
+            int value = Integer.parseInt(comboBoxMap.get(statBox).replaceAll("+", ""));
+
+            statMap.put(characterStat, value);
+        }
+
+
+        SaveFileObj saveFile = new SaveFileObj();
+        saveFile.setName(namnTextField.getText());
+        saveFile.setTitle(titelTextField.getText());
+        saveFile.setAge(ageTextField.getText());
+        saveFile.setGender(genderTextField.getText());
+        saveFile.setOccupation((Occupation) occupationBox.getSelectedItem());
+        saveFile.setRace((Race) raceBox.getSelectedItem());
+        saveFile.setCultureBonus((CharacterStat) cultureBonusBox.getSelectedItem());
+        saveFile.setStats(statMap);
+        saveFile.setHeight(lengthTextArea.getText());
+        saveFile.setWeight(weightTextArea.getText());
+        saveFile.setAbility(abilityComboBox.getSelectedItem().toString());
+        saveFile.setSpecialAbilities(new ComboBoxItem[] {
+                (ComboBoxItem) specialComboBox.getSelectedItem(),
+                (ComboBoxItem) specialComboBox2.getSelectedItem(),
+                (ComboBoxItem) specialComboBox3.getSelectedItem()
+        });
+
+        return saveFile.toJSON();
     }
 }

@@ -5,6 +5,10 @@ import java.awt.event.ItemEvent;
 import java.util.*;
 
 public class StatBoxHandler {
+    public Map<JComboBox, String> getComboBoxMap() {
+        return comboBoxMap;
+    }
+
     private ComboBoxItem[] stats = null;
     public StatBoxHandler(ComboBoxItem[] stats) {
         this.stats = stats;
