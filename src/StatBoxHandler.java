@@ -33,7 +33,6 @@ public class StatBoxHandler {
                 String id = comboBoxMap.get(box);
                 if (id.equals("default")) continue; // Skip value
 
-                System.out.println(statId + " ?= " + id);
                 if (id.equals(statId)) {
                     //System.out.println("Second equals triggers");
                     useValue = false;

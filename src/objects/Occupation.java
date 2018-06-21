@@ -30,6 +30,18 @@ public enum Occupation {
         return name;
     }
 
+    public static Occupation find(String name) {
+        for(Occupation occupation : values()) {
+            if(occupation.getName().equals(name)) {
+                return occupation;
+            }
+            if(occupation.toString().equals(name)) {
+                return occupation;
+            }
+        }
+        return null;
+    }
+
     public String[] getAbilities() {
         return abilities;
     }
@@ -77,6 +89,67 @@ public enum Occupation {
                 new SpecialAbility(CharacterStat.PERCEPTION, "Skarpa Sinnen"),
                 new SpecialAbility(CharacterStat.PERCEPTION, "Spåra"),
                 new SpecialAbility(CharacterStat.PERCEPTION, "Bågar/Armborst"),
+
+                // Viljestyrka
+                new SpecialAbility(CharacterStat.VILJESTYRKA, "Mod"),
+                new SpecialAbility(CharacterStat.VILJESTYRKA, "Sköldat Sinne"),
+                new SpecialAbility(CharacterStat.VILJESTYRKA, "Självdisciplin"),
+                new SpecialAbility(CharacterStat.VILJESTYRKA, "Magiska Ritualer"),
+                new SpecialAbility(CharacterStat.VILJESTYRKA, "Egen Magisk Förmåga"),
+        };
+    }
+
+    public static SpecialAbility[] getAllAbilities() {
+        return new SpecialAbility[] {
+                // Kommunikation
+                new SpecialAbility(CharacterStat.KOMMUNIKATION, "Förhandla"),
+                new SpecialAbility(CharacterStat.KOMMUNIKATION, "Bedrägeri"),
+                new SpecialAbility(CharacterStat.KOMMUNIKATION, "Övertala"),
+                new SpecialAbility(CharacterStat.KOMMUNIKATION, "Charma"),
+                new SpecialAbility(CharacterStat.KOMMUNIKATION, "Framföra"),
+                new SpecialAbility(CharacterStat.KOMMUNIKATION, "Kommendera"),
+                new SpecialAbility(CharacterStat.KOMMUNIKATION, "Djurhantering"),
+
+                // Styrka
+                new SpecialAbility(CharacterStat.STYRKA, "Kraftprov"),
+                new SpecialAbility(CharacterStat.STYRKA, "Tvåhandsvapen (Kross)"),
+                new SpecialAbility(CharacterStat.STYRKA, "Tvåhandsvapen (Klinga)"),
+                new SpecialAbility(CharacterStat.STYRKA, "Enhandsvapen (Kross)"),
+                new SpecialAbility(CharacterStat.STYRKA, "Slagsmål"),
+
+                // List
+                new SpecialAbility(CharacterStat.LIST, "Luftskepp"),
+                new SpecialAbility(CharacterStat.LIST, "Läsa/Skriva"),
+                new SpecialAbility(CharacterStat.LIST, "Örtkunskap"),
+
+                // Fysik
+                new SpecialAbility(CharacterStat.FYSIK, "Klättra"),
+                new SpecialAbility(CharacterStat.FYSIK, "Hoppa"),
+                new SpecialAbility(CharacterStat.FYSIK, "Simma"),
+                new SpecialAbility(CharacterStat.FYSIK, "Rida"),
+                new SpecialAbility(CharacterStat.FYSIK, "Gift Motstånd"),
+                new SpecialAbility(CharacterStat.FYSIK, "Starkt Immunförsvar"),
+                new SpecialAbility(CharacterStat.FYSIK, "Springa"),
+                new SpecialAbility(CharacterStat.FYSIK, "Rida"),
+
+                // Smidighet
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Enhandsvapen (Klinga)"),
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Enhandsvapen (Stick)"),
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Tvåhandsvapen (Stick)"),
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Smyga"),
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Fällor"),
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Låsdyrkning"),
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Fingerfärdighet"),
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Bågar/Armborst"),
+                new SpecialAbility(CharacterStat.SMIDIGHET,"Kasta"),
+                new SpecialAbility(CharacterStat.SMIDIGHET, "Ormkropp"),
+
+                // Perception
+                new SpecialAbility(CharacterStat.PERCEPTION, "Kanoner"),
+                new SpecialAbility(CharacterStat.PERCEPTION, "Skarpa Sinnen"),
+                new SpecialAbility(CharacterStat.PERCEPTION, "Spåra"),
+                new SpecialAbility(CharacterStat.PERCEPTION, "Bågar/Armborst"),
+                new SpecialAbility(CharacterStat.PERCEPTION, "Krutvapen"),
 
                 // Viljestyrka
                 new SpecialAbility(CharacterStat.VILJESTYRKA, "Mod"),

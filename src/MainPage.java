@@ -5,11 +5,11 @@ import races.*;
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 
 public class MainPage {
@@ -52,18 +52,158 @@ public class MainPage {
     private JComboBox[] specialAbilityBoxes = {specialComboBox,specialComboBox2,specialComboBox3};
     private Race[] races = {new Eldari(), new Kandra(), new Riddare(), new Uldinari()};
     private Occupation[] occupations = Occupation.values();
-    private final StatBoxHandler statBoxHandler = new StatBoxHandler(new ComboBoxItem[] {
+    private ComboBoxItem[] defaultStats = new ComboBoxItem[]{
             new ComboBoxItem("default", " "),
             new ComboBoxItem("+2", "+2"),
             new ComboBoxItem("+1 0", "+1"),
             new ComboBoxItem("+1 1", "+1"),
-            new ComboBoxItem("first +0", "+0"),
-            new ComboBoxItem("second +0", "+0"),
+            new ComboBoxItem("+0 0", "+0"),
+            new ComboBoxItem("+0 1", "+0"),
             new ComboBoxItem("-1", "-1"),
             new ComboBoxItem("-2", "-2"),
-    });
-    private final StatBoxHandler specialAbilityBoxHandler = new StatBoxHandler(new ComboBoxItem[0]);
+    };
+    private StatBoxHandler statBoxHandler = new StatBoxHandler(defaultStats);
+    private StatBoxHandler specialAbilityBoxHandler = new StatBoxHandler(new ComboBoxItem[0]);
+
     public MainPage() {
+        final MainPage mainPage = this;
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Character Sheet", "sheet", "sht"));
+        saveToFileButton.addActionListener(e -> {
+            //Handle save button action.
+            fileChooser.setDialogTitle("Save Character Sheet");
+            fileChooser.setApproveButtonText("Save Sheet");
+
+            int returnVal = fileChooser.showSaveDialog(mainPage.mainpanel);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                if(!file.getName().endsWith(".sheet")) {
+                    file = new File(file.getParent(), file.getName() + ".sheet");
+                }
+
+                EUtil.getLogger().info("Saving file " + file.getName() + ".");
+
+                try {
+                    EUtil.createFile(file, generateSaveData().toString());
+                }
+                catch (IOException ex) {
+                    EUtil.getLogger().severe("Could not save file!");
+                    ex.printStackTrace();
+                }
+            }
+            else {
+                EUtil.getLogger().info("Save command cancelled by user.");
+            }
+        });
+
+        loadFileButton.addActionListener(e -> {
+            fileChooser.setDialogTitle("Open Character Sheet");
+            int returnVal = fileChooser.showOpenDialog(mainPage.mainpanel);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                EUtil.getLogger().info("Loading file " + file.getName() + ".");
+
+                String jsonString = null;
+                try {
+                    jsonString = EUtil.readTextFile(file);
+                }
+                catch (IOException e1) {
+                    EUtil.getLogger().severe("IO Error while opening file!");
+                    e1.printStackTrace();
+                    return;
+                }
+
+                SaveFileObj saveFileObj = null;
+                try {
+                    saveFileObj = SaveFileObj.fromJSON(new JSONObject(jsonString));
+                }
+                catch (ClassNotFoundException | IllegalAccessException | InstantiationException e1) {
+                    EUtil.getLogger().info("File " + file.getName() + "does not contain a valid Character Sheet.");
+                    e1.printStackTrace();
+                    return;
+                }
+
+                namnTextField.setText(saveFileObj.getName());
+                titelTextField.setText(saveFileObj.getTitle());
+                ageTextField.setText(saveFileObj.getAge());
+                genderTextField.setText(saveFileObj.getGender());
+                occupationBox.setSelectedItem(saveFileObj.getOccupation());
+                raceBox.setSelectedItem(saveFileObj.getRace());
+                cultureBonusBox.setSelectedItem(saveFileObj.getCultureBonus());
+                abilityComboBox.setSelectedItem(saveFileObj.getAbility());
+
+                Object[] specialAbilities = Occupation.getAllAbilities();
+                List<ComboBoxItem> specialAbilityItems = new ArrayList<>();
+                specialAbilityItems.add(new ComboBoxItem("default", "   "));
+                for(int i = 0; i < specialAbilities.length; i++) {
+                    specialAbilityItems.add(new ComboBoxItem(String.valueOf(i),((SpecialAbility)specialAbilities[i]).getAbility()));
+                }
+
+                specialAbilityBoxHandler = new StatBoxHandler(specialAbilityItems.toArray(new ComboBoxItem[0]));
+                if(saveFileObj.getSpecialAbilities() != null) {
+                    for(int i = 0; i < saveFileObj.getSpecialAbilities().length; i++) {
+                        JComboBox box = specialAbilityBoxes[i];
+                        ComboBoxItem item = saveFileObj.getSpecialAbilities()[i];
+
+                        ComboBoxItem comboBoxItem = null;
+                        for(ComboBoxItem defaultItem : specialAbilityItems.toArray(new ComboBoxItem[0])) {
+                            if(defaultItem.getId().equals(item.getId())) {
+                                comboBoxItem = defaultItem;
+                                break;
+                            }
+                        }
+
+                        System.out.println(box + "\n- " + item.getId() + ": " + item.getValue());
+                        box.setModel(new DefaultComboBoxModel(specialAbilityBoxHandler.getAvailableStats(box)));
+
+                        box.setSelectedItem(comboBoxItem);
+                        specialAbilityBoxHandler.setBoxId(box, item.getId());
+                    }
+                }
+
+                statBoxHandler = new StatBoxHandler(defaultStats);
+                for(CharacterStat stat : saveFileObj.getStats().keySet()) {
+                    int index = 0;
+                    switch(stat) {
+                        case KOMMUNIKATION: index = 0; break;
+                        case FYSIK: index = 1; break;
+                        case LIST: index = 2; break;
+                        case SMIDIGHET: index = 3; break;
+                        case PERCEPTION: index = 4; break;
+                        case STYRKA: index = 5; break;
+                        case VILJESTYRKA: index = 6; break;
+                    }
+                    String id = saveFileObj.getStats().get(stat);
+
+                    JComboBox comboBox = statBoxes[index];
+                    comboBox.setModel(new DefaultComboBoxModel(statBoxHandler.getAvailableStats(comboBox)));
+
+                    ComboBoxItem comboBoxItem = null;
+                    for(ComboBoxItem defaultItem : defaultStats) {
+                        if(defaultItem.getId().equals(id)) {
+                            comboBoxItem = defaultItem;
+                            break;
+                        }
+                    }
+
+
+                    if (comboBoxItem != null) {
+                        comboBox.setSelectedItem(comboBoxItem);
+                        statBoxHandler.setBoxId(comboBox, comboBoxItem.getId());
+                    }
+                }
+
+                lengthTextArea.setText(saveFileObj.getHeight());
+                weightTextArea.setText(saveFileObj.getWeight());
+            }
+            else {
+                EUtil.getLogger().info("Load command cancelled by user.");
+            }
+        });
+
+
 
         raceBox.setModel(new DefaultComboBoxModel(races));
         raceBox.addActionListener(e -> {
@@ -106,31 +246,19 @@ public class MainPage {
             statBoxes[i].addPopupMenuListener(new PopupMenuListener() {
                 @Override
                 public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                    //System.out.println("popup menu visible");
-
                     statBoxes[currentIndex].setSelectedIndex(0);
                     ComboBoxItem[] boxValues = statBoxHandler.getAvailableStats(statBoxes[currentIndex]);
                     statBoxes[currentIndex].setModel(new DefaultComboBoxModel(boxValues));
-
-                    //System.out.println(Arrays.toString(boxValues));
                 }
 
                 @Override
-                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                    //System.out.println("popup menu invisible");
-                }
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
 
                 @Override
-                public void popupMenuCanceled(PopupMenuEvent e) {
-                    // Do nothing
-                }
+                public void popupMenuCanceled(PopupMenuEvent e) {}
             });
-            statBoxes[i].addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    //System.out.println(e.getActionCommand());
-                    statBoxHandler.setBoxId(statBoxes[currentIndex], ((ComboBoxItem)statBoxes[currentIndex].getSelectedItem()).getId());
-                }
+            statBoxes[i].addActionListener(e -> {
+                statBoxHandler.setBoxId(statBoxes[currentIndex], ((ComboBoxItem)statBoxes[currentIndex].getSelectedItem()).getId());
             });
         }
 
@@ -191,25 +319,24 @@ public class MainPage {
     }
 
     public JSONObject generateSaveData() {
-        Map<CharacterStat, Integer> statMap = new HashMap<>();
+        Map<CharacterStat, String> statMap = new HashMap<>();
         for(int i = 0; i < statBoxes.length; i++) {
             JComboBox statBox = statBoxes[i];
-            Map<JComboBox, String> comboBoxMap = statBoxHandler.getComboBoxMap();
 
             CharacterStat characterStat = null;
             switch (i) {
-                case 0: characterStat = CharacterStat.KOMMUNIKATION;
-                case 1: characterStat = CharacterStat.FYSIK;
-                case 2: characterStat = CharacterStat.LIST;
-                case 3: characterStat = CharacterStat.SMIDIGHET;
-                case 4: characterStat = CharacterStat.PERCEPTION;
-                case 5: characterStat = CharacterStat.STYRKA;
-                case 6: characterStat = CharacterStat.VILJESTYRKA;
+                case 0: characterStat = CharacterStat.KOMMUNIKATION; break;
+                case 1: characterStat = CharacterStat.FYSIK; break;
+                case 2: characterStat = CharacterStat.LIST; break;
+                case 3: characterStat = CharacterStat.SMIDIGHET; break;
+                case 4: characterStat = CharacterStat.PERCEPTION; break;
+                case 5: characterStat = CharacterStat.STYRKA; break;
+                case 6: characterStat = CharacterStat.VILJESTYRKA; break;
             }
 
-            int value = Integer.parseInt(comboBoxMap.get(statBox).replaceAll("+", ""));
+            String id = ((ComboBoxItem)statBox.getSelectedItem()).getId();
 
-            statMap.put(characterStat, value);
+            statMap.put(characterStat, id);
         }
 
 
